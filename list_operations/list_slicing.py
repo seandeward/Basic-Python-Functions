@@ -19,4 +19,7 @@ array4 = array[::2]
 # this starts by removing the first, keeping every other third, until ending on 11
 array5 = array[1:11:3]
 
-print(array5)
+# cut off the last item in the array
+array6 = array[:-1]
+
+print(array6)
