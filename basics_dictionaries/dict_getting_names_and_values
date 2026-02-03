@@ -1,0 +1,13 @@
+# * this function goes through all of the dictionary items, gets the value of the key 
+
+def get_most_common_enemy(enemies_dict):
+    max_so_far = float("-inf")
+    most_common_enemy = None
+
+    for key in enemies_dict:
+        value = enemies_dict[key]
+        if value > max_so_far:
+            max_so_far = value
+            most_common_enemy = key
+
+    return most_common_enemy
