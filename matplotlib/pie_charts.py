@@ -1,5 +1,4 @@
 
-#* calculate all the stuff
 def get_hits_per_day(total:int, day_amount:int):
   return total / day_amount
 
