@@ -1,0 +1,15 @@
+basics_OCR/ASSETS/LifeEMSAmbulanceBehavioralHealthTransportReport_Data.pdf
+basics_OCR/ASSETS/Dummy_pic.jpg
+# contains HIPPA data
+basics_OCR/ASSETS/obf_69b9575fdbb55.jpg
+basics_OCR/EasyOCR/facesheet.jpg
+# contains HIPPA data
+
+basics_OCR/EasyOCR/OCR_VENV
+# virtual environment for the EasyOCR testing folder
+basics_OCR/EasyOCR/Dummy_pic.jpg
+
+basics_OCR/EasyOCR/test_results.md
+
+basics_watchdog/create_dir_on_new_file/get_time.py
+basics_watchdog/create_dir_on_new_file/make_directory.py
