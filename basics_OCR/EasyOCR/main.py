@@ -1,9 +1,14 @@
 
 print(f"[:] Importing libraries...")
+import psutil
 import easyocr
 import cv2
 # import numpy as np
 
+print("[:] Limiting thread count and declaring low priority...")
+cv2.setNumThreads(2)  # or however many you want to allow
+psutil.Process().nice(psutil.IDLE_PRIORITY_CLASS) # Windows
+psutil.Process().nice(19) # Linux (0-19, higher = lower priority)
 
 print(f"[:] Loading functions...")
 #:: FUNCTION FOR GETTING THE AVERAGE CONFIDENCE PERCENTAGE ACROSS ALL FOUND TEXT FIELDS
