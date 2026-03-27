@@ -23,15 +23,23 @@ def get_average(con_list:list[float]):
 def preprocess_image(path:str):
   img = cv2.imread(path)
 
-  #* 1. convert to grayscale - removes color noise, most impactful step
+  #* 1. GRAYSCALE - removes color noise. REQUIRED FOR SCRIPT TO WORK.
   img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-  #* 2. denoise - helps with scanned or photographed images
-  # img = cv2.fastNlMeansDenoising(img, h=30)
+  #* 2. DENOISE - helps with scanned or photographed images.
+  img = cv2.fastNlMeansDenoising(img, h=30)
 
-  #* 4. Increase contrast with CLAHE — evens out uneven lighting
+  #* 3. SHARPEN
+    #EasyOCR struggles with soft edges. An unsharp mask works well (according to Claude lol)
+  # blurred = cv2.GaussianBlur(img, (0,0), 3)
+  # img = cv2.addWeighted(img, 1.5, blurred, -0.5, 0)
+
+  #* 4. CONTRAST boost with CLAHE — evens out uneven lighting.
   # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
   # img = clahe.apply(img)
+
+  #* 5. UPSCALE
+  # img = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
 
   return img
 
