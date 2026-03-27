@@ -20,7 +20,7 @@ def get_average(con_list:list[float]):
   for number in con_list:
     sum_num += int(number * 100)
     amount += int(1)
-  return int(sum_num / amount)
+  return f"{int(sum_num / amount)}%"
 
 
 #:: FUNCTION THAT DETAILS THE PRE-PROCESSING SETTINGS
