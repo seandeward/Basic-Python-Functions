@@ -48,9 +48,17 @@ result = reader.readtext(preprocess_image(img))
 #:: BUILD LIST OF CONFIDENCE PERCENTAGES
 print("[:] Building confidence lists...")
 confidence_list = []
+name_confidence_list = []
+num_name_found = int(0)
 # result is a list of [bounding_box, text, confidence]
+pt_name = ["justus", "ward"] #? this will end up being the variable passed from the PDF
 for (bbox, text, confidence) in result:
-  print(f"[-] {text}  ({confidence:.0%})")
+  if pt_name[0] in text.lower() and pt_name[1] in text.lower():
+    print(f"[#] {text}  ({confidence:.0%})")
+    name_confidence_list.append(confidence)
+    num_name_found += int(1)
+  else:
+    print(f"[-] {text}  ({confidence:.0%})")
   confidence_list.append(confidence)
 
 
