@@ -39,9 +39,10 @@ def preprocess_image(path:str):
 #:: INITIALIZE READER
 print("[:] Initializing EasyOCR...")
 reader = easyocr.Reader(['en'], verbose=False)  # initialize once, reuse for multiple images
-img = preprocess_image('facesheet.jpg')
-result = reader.readtext(img)
+
+img = str("facesheet.jpg")
 print(f"[:] Preprocessing '{img}' ...")
+result = reader.readtext(preprocess_image(img))
 
 
 #:: BUILD LIST OF CONFIDENCE PERCENTAGES
