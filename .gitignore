@@ -3,6 +3,9 @@ basics_OCR/ASSETS/Dummy_pic.jpg
 # contains HIPPA data
 basics_OCR/ASSETS/obf_69b9575fdbb55.jpg
 basics_OCR/EasyOCR/facesheet.jpg
+basics_OCR/EasyOCR/facesheet_90deg.jpg
+basics_OCR/EasyOCR/facesheet_180deg.jpg
+basics_OCR/EasyOCR/facesheet_270deg.jpg
 # contains HIPPA data
 
 basics_OCR/EasyOCR/OCR_VENV
