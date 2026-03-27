@@ -14,7 +14,6 @@ print(f"[:] Loading functions...")
 #:: FUNCTION FOR GETTING THE AVERAGE CONFIDENCE PERCENTAGE ACROSS ALL FOUND TEXT FIELDS
 def get_average(con_list:list[float]):
   if con_list == []:
-    return "[!!!] Confidence list is empty!"
     return "[!] Confidence list is empty!"
   sum_num = int(0)
   amount = int(0)
