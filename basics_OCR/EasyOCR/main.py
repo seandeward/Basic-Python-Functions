@@ -1,13 +1,16 @@
 
+print(f"[:] Importing libraries...")
 import easyocr
 import cv2
 # import numpy as np
 
 
-#:: FUNCTION FOR GETTING THE AVERAGE CONFIDENCE PERCENTAGE ACCROSS ALL FOUND TEXT FIELDS
+print(f"[:] Loading functions...")
+#:: FUNCTION FOR GETTING THE AVERAGE CONFIDENCE PERCENTAGE ACROSS ALL FOUND TEXT FIELDS
 def get_average(con_list:list[float]):
   if con_list == []:
     return "[!!!] Confidence list is empty!"
+    return "[!] Confidence list is empty!"
   sum_num = int(0)
   amount = int(0)
   for number in con_list:
@@ -34,12 +37,15 @@ def preprocess_image(path:str):
 
 
 #:: INITIALIZE READER
+print("[:] Initializing EasyOCR...")
 reader = easyocr.Reader(['en'], verbose=False)  # initialize once, reuse for multiple images
 img = preprocess_image('facesheet.jpg')
 result = reader.readtext(img)
+print(f"[:] Preprocessing '{img}' ...")
 
 
 #:: BUILD LIST OF CONFIDENCE PERCENTAGES
+print("[:] Building confidence lists...")
 confidence_list = []
 # result is a list of [bounding_box, text, confidence]
 for (bbox, text, confidence) in result:
