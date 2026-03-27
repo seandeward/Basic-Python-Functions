@@ -45,4 +45,12 @@ confidence_list = []
 for (bbox, text, confidence) in result:
   print(f"[-] {text}  ({confidence:.0%})")
   confidence_list.append(confidence)
-print(f"[=] AVERAGE CONFIDENCE = {get_average(confidence_list)}")
+
+
+#:: RESULTS SECTION
+print("")
+print("########## RESULTS ##########")
+print(f"  AVERAGE CONFIDENCE  = {get_average(confidence_list)}")
+print(f"  AVG NAME CONFIDENCE = {get_average(name_confidence_list)}")
+print(f"  AMT. NAMES FOUND    = {num_name_found}")
+print("")
