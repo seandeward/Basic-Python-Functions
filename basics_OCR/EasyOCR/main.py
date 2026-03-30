@@ -8,6 +8,15 @@ import easyocr
 import cv2
 print(colored("  [:] Done", color='green'))
 
+#:: CONFIGURABLE SETTINGS / GLOBAL VARIABLES
+#* System Settings
+max_cpu_threads_allowed = int(2) # What's the maximum number of CPU cores allowed to be used in this script?
+windows_task_priority = psutil.IDLE_PRIORITY_CLASS # If using Windows -- What Window's priority level do you want for this task?
+linux_priority = 19 # Linux (0-19, higher = lower priority)
+
+#* Filepaths
+archive_folder_filepath = str("") # where to save copies of combined files to, in the event of a mishap
+combined_file_output_filepath = str("") # where to move the combined versions of documents to
 
 #:: LOAD FUNCTIONS
 print(colored(f"[:] Loading functions...", color='yellow'))
@@ -66,9 +75,9 @@ print(colored("  [:] Done", color='green'))
 
 #:: DECLARE TASK PRIORITY
 print(colored("[:] Limiting thread count and declaring lowest priority...", color='yellow'))
-cv2.setNumThreads(2)  # Sets the max thread count allowed to avoid hogging resources.
-psutil.Process().nice(psutil.IDLE_PRIORITY_CLASS) # For Windows - 
-#psutil.Process().nice(19) # Linux (0-19, higher = lower priority)
+cv2.setNumThreads(int(max_cpu_threads_allowed))  # Sets the max thread count allowed to avoid hogging resources.
+psutil.Process().nice(windows_task_priority) # Only enable if using Windows
+# psutil.Process().nice(19) # Only enable if using Linux
 print(colored("  [:] Done", color='green'))
 
 #:: INITIALIZE READER
