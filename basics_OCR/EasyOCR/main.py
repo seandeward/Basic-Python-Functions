@@ -58,10 +58,12 @@ reader = easyocr.Reader(['en'], verbose=False)  # initialize once, reuse for mul
 img = str("facesheet.jpg")
 print(f"[:] Preprocessing '{img}' ...")
 preprocessed_image = preprocess_image(img)
+img_rotations = int(0) #? the number of times that the image file has been rotated
 
 while True:
   
   print(f"[:] Analyzing '{img}' ...")
+  print(f"[-] Rotations = {img_rotations}")
   result = reader.readtext(preprocessed_image)
 
 
@@ -81,11 +83,7 @@ while True:
       # print(f"[-] {text}  ({confidence:.0%})")
     confidence_list.append(confidence)
 
-
-  if num_name_found == int(0):
-    print("[!] No matching names found! Rotating image by 90 degrees...")
-    preprocessed_image = rotate_img_90deg_clockwise(preprocessed_image)
-  elif num_name_found > int(0):
+  if num_name_found > int(0):
     #:: RESULTS SECTION
     print("")
     print("########## RESULTS ##########")
@@ -94,6 +92,14 @@ while True:
     print(f"  AMT. NAMES FOUND    = {num_name_found}")
     print("")
     exit() # way to exit the loop for now
+  elif img_rotations >= int(3):
+    print(f"[!] Image has been rotated {img_rotations}. This likely means that the image does not match to the corresponding PDF, or the image is too low quality. Script would move on to the next image, or if this was the last one, script would move PDF to the 'Archive' folder.")
+    exit() # way to exit the loop for now
+  elif num_name_found == int(0):
+    print("[!] No matching names found! Rotating image by 90 degrees...")
+    preprocessed_image = rotate_img_90deg_clockwise(preprocessed_image)
+    img_rotations += int(1)
   else:
     print(f"[!] There was an error processing the 'num_name_found variable', which equals {num_name_found}")
     exit() # way to exit the loop for now
+
