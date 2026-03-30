@@ -63,7 +63,7 @@ if __name__ == "__main__":
   #* System Settings
   max_cpu_threads_allowed = int(2) # What's the maximum number of CPU cores allowed to be used in this "script?
   windows_task_priority = psutil.IDLE_PRIORITY_CLASS # Only applies to Windows -- What Window's priority level do you want for this task?
-  linux_priority = 19 # Only applies to Linux (0-19, higher = lower priority)
+  linux_priority = 19 # Only applies to Linux -- (0-19, higher number = lower priority)
 
   #* Filepaths
   archive_folder_filepath = str("") # where to save copies of combined files to, in the event of a mishap
