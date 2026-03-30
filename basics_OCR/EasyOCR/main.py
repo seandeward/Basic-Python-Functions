@@ -1,13 +1,13 @@
 
 #:: IMPORT LIBRARIES
 from termcolor import colored
-print(colored("[:] Importing libraries...", color='yellow'))
+print(colored("[-] Importing libraries...", color='yellow'))
 from platform import system
 import os
 import psutil
 import easyocr
 import cv2
-print(colored("  [:] Done", color='green'))
+print(colored("  [-] Done", color='green'))
 
 #:: CONFIGURABLE SETTINGS / GLOBAL VARIABLES
 #* System Settings
@@ -20,7 +20,7 @@ archive_folder_filepath = str("") # where to save copies of combined files to, i
 combined_file_output_filepath = str("") # where to move the combined versions of documents to
 
 #:: LOAD FUNCTIONS
-print(colored(f"[:] Loading functions...", color='yellow'))
+print(colored(f"[-] Loading functions...", color='yellow'))
 
 def list_all_of_file_type(file_type:str="None", file_path:str="./") -> list[str]:
   """Returns a list of strings for each requested file type in a directory.
@@ -69,39 +69,39 @@ def get_average(num_list:list[float]) -> str:
     amount += int(1)
   return f"{int(sum_num / amount)}%"
 
-print(colored("  [:] Done", color='green'))
+print(colored("  [-] Done", color='green'))
 
 #! SCRIPT WOULD GET A LIST OF PDFs, AND CREATE A WHILE LOOP TO ITERATE OVER EACH ONE TO FIND A MATCH
 
 
 #:: DECLARE TASK PRIORITY
-print(colored("[:] Limiting thread count and declaring lowest priority...", color='yellow'))
+print(colored("[-] Limiting thread count and declaring lowest priority...", color='yellow'))
 cv2.setNumThreads(int(max_cpu_threads_allowed))  # Sets the max thread count allowed to avoid hogging resources.
 
 #* Find name of running OS
 system_name = system()
-print(colored(f"[:] {system_name} OS detected", color="cyan"))
+print(colored(f"[-] {system_name} OS detected", color="cyan"))
 if system_name == "Windows":
   psutil.Process().nice(windows_task_priority) # Only enable if using Windows
 elif system_name == "Linux":
   psutil.Process().nice(linux_priority)
 
-print(colored("  [:] Done", color='green'))
+print(colored("  [-] Done", color='green'))
 
 #:: INITIALIZE READER
-print(colored("[:] Initializing EasyOCR...", color='yellow'))
+print(colored("[-] Initializing EasyOCR...", color='yellow'))
 reader = easyocr.Reader(['en'], verbose=False)  # initialize once, reuse for multiple images
-print(colored("  [:] Done", color='green'))
+print(colored("  [-] Done", color='green'))
 
 #! NORMALLY, SCRIPT WOULD ACTIVATE ONCE A PDF IS DROPPED INTO THE TARGET DIRECTORY. FOR TESTING, IT WILL INITIALIZE AUTOMATICALLY.
 
 pt_name = ["justus", "ward"] #! PT NAME WOULD NORMALLY BE PROCESSED FROM THE SOURCE PDF FIRST
-print(colored(f"[:] Patient Name: {pt_name[0]} {pt_name[1]}", color='green'))
+print(colored(f"[-] Patient Name: {pt_name[0]} {pt_name[1]}", color='green'))
 
 #:: GET JPG LIST
-print(colored("[:] Getting list of JPGs...", color='yellow'))
+print(colored("[-] Getting list of JPGs...", color='yellow'))
 jpg_list = list_all_of_file_type(".jpg")
-print(colored(f"[:] JPG_list = {jpg_list}", color='green'))
+print(colored(f"[-] JPG_list = {jpg_list}", color='green'))
 
 #:: PROCESS AND ANALYZE EACH JPG IN JPG LIST
 for img in jpg_list:
@@ -111,8 +111,8 @@ for img in jpg_list:
 
   while True:
     if img_rotations > int(0):
-      print(f"  [.] Rotations = {img_rotations}")
-    print(f"[:] Analyzing '{img}' ...")
+      print(f"  [-] Rotations = {img_rotations}")
+    print(f"[-] Analyzing '{img}' ...")
     num_name_found = int(0)
     general_confidence_list = []
     name_confidence_list = []
