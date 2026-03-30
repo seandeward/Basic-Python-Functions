@@ -1,5 +1,6 @@
 
 print(f"[:] Importing libraries...")
+import os
 import psutil
 import easyocr
 import cv2
@@ -11,6 +12,16 @@ psutil.Process().nice(psutil.IDLE_PRIORITY_CLASS) # For Windows -
 #psutil.Process().nice(19) # Linux (0-19, higher = lower priority)
 
 print(f"[:] Loading functions...")
+#:: FUNCTION FOR GETTING A LIST OF ALL FILES OF A SPECIFIC EXTENSION
+def list_all_of_file_type(file_type:str="None", file_path:str="./") -> list[str]:
+  """Returns a list of strings for each requested file type in a directory.
+  Args:
+      filepath (str): Target directory filepath."""
+  result = [f for f in os.listdir(file_path) 
+    if os.path.isfile(os.path.join(file_path, f)) and f.endswith(file_type)]
+  return result
+
+
 #:: FUNCTION FOR GETTING THE AVERAGE CONFIDENCE PERCENTAGE ACROSS ALL FOUND TEXT FIELDS
 def get_average(con_list:list[float]):
   if con_list == []:
