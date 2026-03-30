@@ -54,30 +54,42 @@ reader = easyocr.Reader(['en'], verbose=False)  # initialize once, reuse for mul
 
 img = str("facesheet.jpg")
 print(f"[:] Preprocessing '{img}' ...")
-result = reader.readtext(preprocess_image(img))
+preprocessed_image = preprocess_image(img)
+
+while True:
+  
+  print(f"[:] Analyzing '{img}' ...")
+  result = reader.readtext(preprocessed_image)
 
 
-#:: BUILD LIST OF CONFIDENCE PERCENTAGES
-print("[:] Building confidence lists...")
-confidence_list = []
-name_confidence_list = []
-num_name_found = int(0)
-# result is a list of [bounding_box, text, confidence]
-pt_name = ["justus", "ward"] #? this will end up being the variable passed from the PDF
-for (bbox, text, confidence) in result:
-  if pt_name[0] in text.lower() and pt_name[1] in text.lower():
-    print(f"[#] {text}  ({confidence:.0%})")
-    name_confidence_list.append(confidence)
-    num_name_found += int(1)
+  #:: BUILD LIST OF CONFIDENCE PERCENTAGES
+  print("[:] Building confidence lists...")
+  confidence_list = []
+  name_confidence_list = []
+  num_name_found = int(0)
+  # result is a list of [bounding_box, text, confidence]
+  pt_name = ["justus", "ward"] #? this will end up being the variable passed from the PDF
+  for (bbox, text, confidence) in result:
+    if pt_name[0] in text.lower() and pt_name[1] in text.lower():
+      # print(f"[#] {text}  ({confidence:.0%})")
+      name_confidence_list.append(confidence)
+      num_name_found += int(1)
+    # else:
+      # print(f"[-] {text}  ({confidence:.0%})")
+    confidence_list.append(confidence)
+
+
+  if num_name_found == int(0):
+    print("[!] No matching names found! Rotating image by 90 degrees...")
+  elif num_name_found > int(0):
+    #:: RESULTS SECTION
+    print("")
+    print("########## RESULTS ##########")
+    print(f"  AVERAGE CONFIDENCE  = {get_average(confidence_list)}")
+    print(f"  AVG NAME CONFIDENCE = {get_average(name_confidence_list)}")
+    print(f"  AMT. NAMES FOUND    = {num_name_found}")
+    print("")
+    exit() # for now
   else:
-    print(f"[-] {text}  ({confidence:.0%})")
-  confidence_list.append(confidence)
-
-
-#:: RESULTS SECTION
-print("")
-print("########## RESULTS ##########")
-print(f"  AVERAGE CONFIDENCE  = {get_average(confidence_list)}")
-print(f"  AVG NAME CONFIDENCE = {get_average(name_confidence_list)}")
-print(f"  AMT. NAMES FOUND    = {num_name_found}")
-print("")
+    print(f"[!] There was an error processing the 'num_name_found variable', which equals {num_name_found}")
+    exit() # for now
