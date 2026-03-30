@@ -1,18 +1,17 @@
 
-print(f"[:] Importing libraries...")
+#:: IMPORT LIBRARIES
+from termcolor import colored
+print(colored("[:] Importing libraries...", color='yellow'))
 import os
 import psutil
 import easyocr
 import cv2
-# import numpy as np
+print(colored("  [:] Done", color='green'))
 
-print("[:] Limiting thread count and declaring lowest priority...")
-cv2.setNumThreads(2)  # Sets the max thread count allowed to avoid hogging resources.
-psutil.Process().nice(psutil.IDLE_PRIORITY_CLASS) # For Windows - 
-#psutil.Process().nice(19) # Linux (0-19, higher = lower priority)
 
-print(f"[:] Loading functions...")
-#:: FUNCTION FOR GETTING A LIST OF ALL FILES OF A SPECIFIC EXTENSION
+#:: LOAD FUNCTIONS
+print(colored(f"[:] Loading functions...", color='yellow'))
+
 def list_all_of_file_type(file_type:str="None", file_path:str="./") -> list[str]:
   """Returns a list of strings for each requested file type in a directory.
   Args:
@@ -21,96 +20,106 @@ def list_all_of_file_type(file_type:str="None", file_path:str="./") -> list[str]
     if os.path.isfile(os.path.join(file_path, f)) and f.endswith(file_type)]
   return result
 
-
-#:: FUNCTION FOR GETTING THE AVERAGE CONFIDENCE PERCENTAGE ACROSS ALL FOUND TEXT FIELDS
-def get_average(con_list:list[float]):
-  if con_list == []:
-    return "[!] Confidence list is empty!"
-  sum_num = int(0)
-  amount = int(0)
-  for number in con_list:
-    sum_num += int(number * 100)
-    amount += int(1)
-  return f"{int(sum_num / amount)}%"
-
-
-#:: FUNCTION THAT DETAILS THE PRE-PROCESSING SETTINGS
 def preprocess_image(path:str):
+  """Pre-processes an image file for later analysis.
+  Args:
+      path (str): File path of the image to be processed.
+  Returns:
+      'img': The pre-processed image file."""
   img = cv2.imread(path)
-
   #* 1. GRAYSCALE - removes color noise. REQUIRED FOR SCRIPT TO WORK.
   img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
   #* 2. DENOISE - helps with scanned or photographed images.
   img = cv2.fastNlMeansDenoising(img, h=30)
-
-  #* 3. SHARPEN
-    #EasyOCR struggles with soft edges. An unsharp mask works well (according to Claude lol)
-  # blurred = cv2.GaussianBlur(img, (0,0), 3)
-  # img = cv2.addWeighted(img, 1.5, blurred, -0.5, 0)
-
-  #* 4. CONTRAST boost with CLAHE — evens out uneven lighting.
-  # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-  # img = clahe.apply(img)
-
-  #* 5. UPSCALE
-  # img = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
-
   return img
 
 def rotate_img_90deg_clockwise(image_file):
   return cv2.rotate(image_file, cv2.ROTATE_90_CLOCKWISE)
 
+def print_analysis_results(times_name_was_found:int=0, name_confidence_list:list[float]=[], general_confidence_list:list[float]=[]):
+  print("")
+  print(colored("########## RESULTS ##########", colored="green"))
+  print(colored(f"  AVERAGE CONFIDENCE  = {get_average(general_confidence_list)}", color='green'))
+  print(colored(f"  AVG NAME CONFIDENCE = {get_average(name_confidence_list)}", color='green'))
+  print(colored(f"  AMT. NAMES FOUND    = {times_name_was_found}", color='green'))
+  print("")
+
+def get_average(num_list:list[float]) -> str:
+  """Gets the average percentage from a list of float numbers.
+  Args:
+      num_list (list[float]): The numbers to find the average of.
+  Returns:
+      str: A string that dispalys the average percentage. """
+  if num_list == []:
+    return "[!] Confidence list is empty!"
+  sum_num = int(0)
+  amount = int(0)
+  for num in num_list:
+    sum_num += int(num * 100)
+    amount += int(1)
+  return f"{int(sum_num / amount)}%"
+
+print(colored("  [:] Done", color='green'))
+
+#! SCRIPT WOULD GET A LIST OF PDFs, AND CREATE A WHILE LOOP TO ITERATE OVER EACH ONE TO FIND A MATCH
+
+
+#:: DECLARE TASK PRIORITY
+print(colored("[:] Limiting thread count and declaring lowest priority...", color='yellow'))
+cv2.setNumThreads(2)  # Sets the max thread count allowed to avoid hogging resources.
+psutil.Process().nice(psutil.IDLE_PRIORITY_CLASS) # For Windows - 
+#psutil.Process().nice(19) # Linux (0-19, higher = lower priority)
+print(colored("  [:] Done", color='green'))
 
 #:: INITIALIZE READER
-print("[:] Initializing EasyOCR...")
+print(colored("[:] Initializing EasyOCR...", color='yellow'))
 reader = easyocr.Reader(['en'], verbose=False)  # initialize once, reuse for multiple images
+print(colored("  [:] Done", color='green'))
 
-img = str("facesheet.jpg")
-print(f"[:] Preprocessing '{img}' ...")
-preprocessed_image = preprocess_image(img)
-img_rotations = int(0) #? the number of times that the image file has been rotated
+#! NORMALLY, SCRIPT WOULD ACTIVATE ONCE A PDF IS DROPPED INTO THE TARGET DIRECTORY. FOR TESTING, IT WILL INITIALIZE AUTOMATICALLY.
 
-while True:
-  
-  print(f"[:] Analyzing '{img}' ...")
-  print(f"[-] Rotations = {img_rotations}")
-  result = reader.readtext(preprocessed_image)
+pt_name = ["justus", "ward"] #! PT NAME WOULD NORMALLY BE PROCESSED FROM THE SOURCE PDF FIRST
+print(colored(f"[:] Patient Name: {pt_name[0]} {pt_name[1]}", color='green'))
 
+#:: GET JPG LIST
+print(colored("[:] Getting list of JPGs...", color='yellow'))
+jpg_list = list_all_of_file_type(".jpg")
+print(colored(f"[:] JPG_list = {jpg_list}", color='green'))
 
-  #:: BUILD LIST OF CONFIDENCE PERCENTAGES
-  print("[:] Building confidence lists...")
-  confidence_list = []
-  name_confidence_list = []
-  num_name_found = int(0)
-  # result is a list of [bounding_box, text, confidence]
-  pt_name = ["justus", "ward"] #? this will end up being the variable passed from the PDF
-  for (bbox, text, confidence) in result:
-    if pt_name[0] in text.lower() and pt_name[1] in text.lower():
-      # print(f"[#] {text}  ({confidence:.0%})")
-      name_confidence_list.append(confidence)
-      num_name_found += int(1)
-    # else:
-      # print(f"[-] {text}  ({confidence:.0%})")
-    confidence_list.append(confidence)
+#:: PROCESS AND ANALYZE EACH JPG IN JPG LIST
+for img in jpg_list:
+  pass
+  preprocessed_image = preprocess_image(img)
+  img_rotations = int(0)
 
-  if num_name_found > int(0):
-    #:: RESULTS SECTION
-    print("")
-    print("########## RESULTS ##########")
-    print(f"  AVERAGE CONFIDENCE  = {get_average(confidence_list)}")
-    print(f"  AVG NAME CONFIDENCE = {get_average(name_confidence_list)}")
-    print(f"  AMT. NAMES FOUND    = {num_name_found}")
-    print("")
-    exit() # way to exit the loop for now
-  elif img_rotations >= int(3):
-    print(f"[!] Image has been rotated {img_rotations}. This likely means that the image does not match to the corresponding PDF, or the image is too low quality. Script would move on to the next image, or if this was the last one, script would move PDF to the 'Archive' folder.")
-    exit() # way to exit the loop for now
-  elif num_name_found == int(0):
-    print("[!] No matching names found! Rotating image by 90 degrees...")
-    preprocessed_image = rotate_img_90deg_clockwise(preprocessed_image)
-    img_rotations += int(1)
-  else:
-    print(f"[!] There was an error processing the 'num_name_found variable', which equals {num_name_found}")
-    exit() # way to exit the loop for now
+  while True:
+    if img_rotations > int(0):
+      print(f"  [.] Rotations = {img_rotations}")
+    print(f"[:] Analyzing '{img}' ...")
+    num_name_found = int(0)
+    general_confidence_list = []
+    name_confidence_list = []
+    result = reader.readtext(preprocessed_image)
 
+    #:: LOOK FOR THE NAME IN THE JPG
+    for (bbox, text, confidence) in result:
+      if pt_name[0].lower() in text.lower() and pt_name[1].lower() in text.lower():
+        num_name_found += int(1)
+        name_confidence_list.append(confidence)
+      else:
+        general_confidence_list.append(confidence)
+    
+    if num_name_found > int(0):
+      print_analysis_results(num_name_found, name_confidence_list, general_confidence_list) #! This will later become where the PDF conversion, appending, and file move will take place.
+      break
+    elif img_rotations >= int(3):
+      print(colored(f"[!] image has already been rotated more than 3 times. Moving on to the next image...", color='red'))
+      print('') # for terminal space
+      break
+    elif num_name_found == int(0):
+      print(colored("[!] No matching names found. Rotating image by 90 degrees...", color='yellow'))
+      preprocessed_image = rotate_img_90deg_clockwise(preprocessed_image)
+      img_rotations += int(1)
+    else:
+      print(colored(f"[!] There was an error processing the 'num_name_found variable', which equals {num_name_found}", color='red'))
+      break
