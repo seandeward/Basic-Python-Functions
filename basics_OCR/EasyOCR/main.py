@@ -1,26 +1,5 @@
 
-#:: IMPORT LIBRARIES
-from termcolor import colored
-print(colored("[-] Importing libraries...", color='yellow'))
-from platform import system
-import os
-import psutil
-import easyocr
-import cv2
-print(colored("  [-] Done", color='green'))
-
-#:: CONFIGURABLE SETTINGS / GLOBAL VARIABLES
-#* System Settings
-max_cpu_threads_allowed = int(2) # What's the maximum number of CPU cores allowed to be used in this "script?
-windows_task_priority = psutil.IDLE_PRIORITY_CLASS # Only applies to Windows -- What Window's priority level do you want for this task?
-linux_priority = 19 # Only applies to Linux (0-19, higher = lower priority)
-
-#* Filepaths
-archive_folder_filepath = str("") # where to save copies of combined files to, in the event of a mishap
-combined_file_output_filepath = str("") # where to move the combined versions of documents to
-
 #:: LOAD FUNCTIONS
-print(colored(f"[-] Loading functions...", color='yellow'))
 
 def list_all_of_file_type(file_type:str="None", file_path:str="./") -> list[str]:
   """Returns a list of strings for each requested file type in a directory.
@@ -69,74 +48,95 @@ def get_average(num_list:list[float]) -> str:
     amount += int(1)
   return f"{int(sum_num / amount)}%"
 
-print(colored("  [-] Done", color='green'))
+if __name__ == "__main__":
+  #:: IMPORT LIBRARIES
+  from termcolor import colored
+  print(colored("[-] Importing libraries...", color='yellow'))
+  from platform import system
+  import os
+  import psutil
+  import easyocr
+  import cv2
+  print(colored("    Done", color='green'))
 
-#! SCRIPT WOULD GET A LIST OF PDFs, AND CREATE A WHILE LOOP TO ITERATE OVER EACH ONE TO FIND A MATCH
+  #:: CONFIGURABLE SETTINGS / GLOBAL VARIABLES
+  #* System Settings
+  max_cpu_threads_allowed = int(2) # What's the maximum number of CPU cores allowed to be used in this "script?
+  windows_task_priority = psutil.IDLE_PRIORITY_CLASS # Only applies to Windows -- What Window's priority level do you want for this task?
+  linux_priority = 19 # Only applies to Linux (0-19, higher = lower priority)
+
+  #* Filepaths
+  archive_folder_filepath = str("") # where to save copies of combined files to, in the event of a mishap
+  combined_file_output_filepath = str("") # where to move the combined versions of documents to
 
 
-#:: DECLARE TASK PRIORITY
-print(colored("[-] Limiting thread count and declaring lowest priority...", color='yellow'))
-cv2.setNumThreads(int(max_cpu_threads_allowed))  # Sets the max thread count allowed to avoid hogging resources.
+  #! SCRIPT WOULD GET A LIST OF PDFs, AND CREATE A WHILE LOOP TO ITERATE OVER EACH ONE TO FIND A MATCH
 
-#* Find name of running OS
-system_name = system()
-print(colored(f"[-] {system_name} OS detected", color="cyan"))
-if system_name == "Windows":
-  psutil.Process().nice(windows_task_priority) # Only enable if using Windows
-elif system_name == "Linux":
-  psutil.Process().nice(linux_priority)
 
-print(colored("  [-] Done", color='green'))
+  #:: DECLARE TASK PRIORITY
+  print(colored("[-] Limiting thread count and declaring lowest priority...", color='yellow'))
+  cv2.setNumThreads(int(max_cpu_threads_allowed))  # Sets the max thread count allowed to avoid hogging resources.
 
-#:: INITIALIZE READER
-print(colored("[-] Initializing EasyOCR...", color='yellow'))
-reader = easyocr.Reader(['en'], verbose=False)  # initialize once, reuse for multiple images
-print(colored("  [-] Done", color='green'))
+  #* Find name of running OS
+  system_name = system()
+  print(colored(f"[-] {system_name} OS detected", color="cyan"))
+  if system_name == "Windows":
+    psutil.Process().nice(windows_task_priority) # Only enable if using Windows
+  elif system_name == "Linux":
+    psutil.Process().nice(linux_priority)
 
-#! NORMALLY, SCRIPT WOULD ACTIVATE ONCE A PDF IS DROPPED INTO THE TARGET DIRECTORY. FOR TESTING, IT WILL INITIALIZE AUTOMATICALLY.
+  print(colored("    Done", color='green'))
 
-pt_name = ["justus", "ward"] #! PT NAME WOULD NORMALLY BE PROCESSED FROM THE SOURCE PDF FIRST
-print(colored(f"[-] Patient Name: {pt_name[0]} {pt_name[1]}", color='green'))
+  #:: INITIALIZE READER
+  print(colored("[-] Initializing EasyOCR...", color='yellow'))
+  reader = easyocr.Reader(['en'], verbose=False)  # initialize once, reuse for multiple images
+  print(colored("    Done", color='green'))
 
-#:: GET JPG LIST
-print(colored("[-] Getting list of JPGs...", color='yellow'))
-jpg_list = list_all_of_file_type(".jpg")
-print(colored(f"[-] JPG_list = {jpg_list}", color='green'))
+  #! NORMALLY, SCRIPT WOULD ACTIVATE ONCE A PDF IS DROPPED INTO THE TARGET DIRECTORY. FOR TESTING, IT WILL INITIALIZE AUTOMATICALLY.
 
-#:: PROCESS AND ANALYZE EACH JPG IN JPG LIST
-for img in jpg_list:
-  pass
-  preprocessed_image = preprocess_image(img)
-  img_rotations = int(0)
+  pt_name = ["justus", "ward"] #! PT NAME WOULD NORMALLY BE PROCESSED FROM THE SOURCE PDF FIRST
+  print(colored(f"[-] Patient Name: {pt_name[0]} {pt_name[1]}", color='green'))
 
-  while True:
-    if img_rotations > int(0):
-      print(f"  [-] Rotations = {img_rotations}")
-    print(f"[-] Analyzing '{img}' ...")
-    num_name_found = int(0)
-    general_confidence_list = []
-    name_confidence_list = []
-    result = reader.readtext(preprocessed_image)
+  #:: GET JPG LIST
+  print(colored("[-] Getting list of JPGs...", color='yellow'))
+  jpg_list = list_all_of_file_type(".jpg")
+  print(colored(f"[-] JPG_list = {jpg_list}", color='green'))
 
-    #:: LOOK FOR THE NAME IN THE JPG
-    for (bbox, text, confidence) in result:
-      if pt_name[0].lower() in text.lower() and pt_name[1].lower() in text.lower():
-        num_name_found += int(1)
-        name_confidence_list.append(confidence)
+  #:: PROCESS AND ANALYZE EACH JPG IN JPG LIST
+  for img in jpg_list:
+    pass
+    preprocessed_image = preprocess_image(img)
+    img_rotations = int(0)
+
+    while True:
+      if img_rotations > int(0):
+        print(f"  [-] Rotations = {img_rotations}")
+      print(f"[-] Analyzing '{img}' ...")
+      num_name_found = int(0)
+      general_confidence_list = []
+      name_confidence_list = []
+      result = reader.readtext(preprocessed_image)
+
+      #:: LOOK FOR THE NAME IN THE JPG
+      for (bbox, text, confidence) in result:
+        if pt_name[0].lower() in text.lower() and pt_name[1].lower() in text.lower():
+          num_name_found += int(1)
+          name_confidence_list.append(confidence)
+        else:
+          general_confidence_list.append(confidence)
+      
+      if num_name_found > int(0):
+        print_analysis_results(num_name_found, name_confidence_list, general_confidence_list) 
+        #! This will later become where the PDF conversion, appending, and file move will take place.
+        break
+      elif img_rotations >= int(3):
+        print(colored(f"[!] image has already been rotated more than 3 times. Moving on to the next image...", color='red'))
+        print('') # for terminal space
+        break
+      elif num_name_found == int(0):
+        print(colored("[!] No matching names found. Rotating image by 90 degrees...", color='yellow'))
+        preprocessed_image = rotate_img_90deg_clockwise(preprocessed_image)
+        img_rotations += int(1)
       else:
-        general_confidence_list.append(confidence)
-    
-    if num_name_found > int(0):
-      print_analysis_results(num_name_found, name_confidence_list, general_confidence_list) #! This will later become where the PDF conversion, appending, and file move will take place.
-      break
-    elif img_rotations >= int(3):
-      print(colored(f"[!] image has already been rotated more than 3 times. Moving on to the next image...", color='red'))
-      print('') # for terminal space
-      break
-    elif num_name_found == int(0):
-      print(colored("[!] No matching names found. Rotating image by 90 degrees...", color='yellow'))
-      preprocessed_image = rotate_img_90deg_clockwise(preprocessed_image)
-      img_rotations += int(1)
-    else:
-      print(colored(f"[!] There was an error processing the 'num_name_found variable', which equals {num_name_found}", color='red'))
-      break
+        print(colored(f"[!] There was an error processing the 'num_name_found variable', which equals {num_name_found}", color='red'))
+        break
