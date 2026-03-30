@@ -2,6 +2,7 @@
 #:: IMPORT LIBRARIES
 from termcolor import colored
 print(colored("[:] Importing libraries...", color='yellow'))
+from platform import system
 import os
 import psutil
 import easyocr
@@ -10,9 +11,9 @@ print(colored("  [:] Done", color='green'))
 
 #:: CONFIGURABLE SETTINGS / GLOBAL VARIABLES
 #* System Settings
-max_cpu_threads_allowed = int(2) # What's the maximum number of CPU cores allowed to be used in this script?
-windows_task_priority = psutil.IDLE_PRIORITY_CLASS # If using Windows -- What Window's priority level do you want for this task?
-linux_priority = 19 # Linux (0-19, higher = lower priority)
+max_cpu_threads_allowed = int(2) # What's the maximum number of CPU cores allowed to be used in this "script?
+windows_task_priority = psutil.IDLE_PRIORITY_CLASS # Only applies to Windows -- What Window's priority level do you want for this task?
+linux_priority = 19 # Only applies to Linux (0-19, higher = lower priority)
 
 #* Filepaths
 archive_folder_filepath = str("") # where to save copies of combined files to, in the event of a mishap
@@ -76,8 +77,15 @@ print(colored("  [:] Done", color='green'))
 #:: DECLARE TASK PRIORITY
 print(colored("[:] Limiting thread count and declaring lowest priority...", color='yellow'))
 cv2.setNumThreads(int(max_cpu_threads_allowed))  # Sets the max thread count allowed to avoid hogging resources.
-psutil.Process().nice(windows_task_priority) # Only enable if using Windows
-# psutil.Process().nice(19) # Only enable if using Linux
+
+#* Find name of running OS
+system_name = system()
+print(colored(f"[:] {system_name} OS detected", color="cyan"))
+if system_name == "Windows":
+  psutil.Process().nice(windows_task_priority) # Only enable if using Windows
+elif system_name == "Linux":
+  psutil.Process().nice(linux_priority)
+
 print(colored("  [:] Done", color='green'))
 
 #:: INITIALIZE READER
