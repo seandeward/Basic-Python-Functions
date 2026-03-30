@@ -16,3 +16,5 @@ basics_OCR/EasyOCR/test_results.md
 
 basics_watchdog/create_dir_on_new_file/get_time.py
 basics_watchdog/create_dir_on_new_file/make_directory.py
+
+basics_OCR/EasyOCR/test.py
