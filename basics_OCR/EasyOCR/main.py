@@ -48,6 +48,8 @@ def preprocess_image(path:str):
   return img
 
 def rotate_img_90deg_clockwise(image_file):
+  return cv2.rotate(image_file, cv2.ROTATE_90_CLOCKWISE)
+
 
 #:: INITIALIZE READER
 print("[:] Initializing EasyOCR...")
