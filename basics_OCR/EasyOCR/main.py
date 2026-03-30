@@ -93,7 +93,7 @@ while True:
     print(f"  AVG NAME CONFIDENCE = {get_average(name_confidence_list)}")
     print(f"  AMT. NAMES FOUND    = {num_name_found}")
     print("")
-    exit() # for now
+    exit() # way to exit the loop for now
   else:
     print(f"[!] There was an error processing the 'num_name_found variable', which equals {num_name_found}")
-    exit() # for now
+    exit() # way to exit the loop for now
