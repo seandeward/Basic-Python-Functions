@@ -47,6 +47,7 @@ def preprocess_image(path:str):
 
   return img
 
+def rotate_img_90deg_clockwise(image_file):
 
 #:: INITIALIZE READER
 print("[:] Initializing EasyOCR...")
@@ -81,6 +82,7 @@ while True:
 
   if num_name_found == int(0):
     print("[!] No matching names found! Rotating image by 90 degrees...")
+    preprocessed_image = rotate_img_90deg_clockwise(preprocessed_image)
   elif num_name_found > int(0):
     #:: RESULTS SECTION
     print("")
