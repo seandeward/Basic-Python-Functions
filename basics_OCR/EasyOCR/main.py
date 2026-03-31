@@ -1,4 +1,6 @@
 
+#:: LAST UPDATED 3-30-26
+
 #:: LOAD FUNCTIONS
 
 def list_all_of_file_type(file_type:str="None", file_path:str="./") -> list[str]:
